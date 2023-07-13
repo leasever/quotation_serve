@@ -1,0 +1,32 @@
+{
+  "name": "quot-serve",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A Strapi application",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@strapi/strapi": "4.11.5",
+    "@strapi/plugin-users-permissions": "4.11.5",
+    "pg": "8.8.0",
+    "@strapi/provider-upload-cloudinary": "^4.11.5",
+    "form-data": "^4.0.0",
+    "pdfkit": "^0.13.0"
+  },
+  "author": {
+    "name": "Abraham Leandro"
+  },
+  "strapi": {
+    "uuid": "3c936de4-c552-4cba-b227-4b99d64ee0ef"
+  },
+  "engines": {
+    "node": ">=14.19.1 <=18.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}
