@@ -1,3 +1,4 @@
+// @ts-nocheck
 const PDFDocument = require("pdfkit");
 
 const currentDate = new Date().toLocaleDateString(undefined, {
@@ -43,15 +44,20 @@ async function createPdfQuotation(data, quotationNumber) {
   });
 }
 
+/**
+ * @param {PDFKit.PDFDocument} doc
+ */
 function generateHeader(doc) {
   doc
     .image("public/logo.jpg", 50, 45, { width: 150 })
     .fillColor("#444444")
     .fontSize(10)
     .font("Helvetica-Bold")
-    .text("RUC:     20603425627", 330, 62)
-    .text("Cel:       948125398", 330, 78)
+    .text("RUC: 20603425627", 330, 62)
+    .text("Cel: 948125398", 330, 78)
     .text("Correo: consorcio.electrica.sac@gmail.com", 330, 94)
+    .text(`Web: ${process.env.CLIENT_URL}`, 330, 110)
+
     .moveDown();
 }
 
@@ -80,6 +86,10 @@ function generateCustomerInformation(doc, data, quotationNumber) {
   generateHr(doc, 232);
 }
 
+/**
+ * @param {PDFKit.PDFDocument} doc
+ * @param {{ products: any; }} data
+ */
 function generateQuotationTable(doc, data) {
   const QuotationTableTop = 280;
   const columnWidths = [258, 80, 43, 50, 56.28];
@@ -161,6 +171,15 @@ function generateQuotationTable(doc, data) {
   return total;
 }
 
+/**
+ * @param {{ fontSize: (arg0: number) => { (): any; new (): any; text: { (arg0: any, arg1: number, arg2: any, arg3: { width: number; align: string; }): { (): any; new (): any; text: { (arg0: any, arg1: number, arg2: any, arg3: { width: number; align: string; }): { (): any; new (): any; text: { (arg0: any, arg1: number, arg2: any, arg3: { width: number; align: string; }): void; new (): any; }; }; new (): any; }; }; new (): any; }; }; text: (arg0: string, arg1: number, arg2: any, arg3: { width: number; align: string; }) => void; }} doc
+ * @param {number} y
+ * @param {string} item
+ * @param {string} size
+ * @param {string} quantity
+ * @param {string | number} unitPrice
+ * @param {string | number} subtotal
+ */
 function generateTableRow(doc, y, item, size, quantity, unitPrice, subtotal) {
   const columnPositions = [50, 310, 394, 440, 489];
   const columnWidths = [258, 80, 43, 50, 56.28];
