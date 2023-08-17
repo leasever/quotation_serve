@@ -20,7 +20,8 @@
     "subtitle": {
       "type": "string",
       "required": false,
-      "unique": false
+      "unique": false,
+      "maxLength": 99
     },
     "description": {
       "type": "richtext"
@@ -28,7 +29,7 @@
     "image": {
       "type": "media",
       "multiple": true,
-      "required": true,
+      "required": false,
       "allowedTypes": [
         "images"
       ]
@@ -36,7 +37,7 @@
     "thumbnail": {
       "type": "media",
       "multiple": false,
-      "required": true,
+      "required": false,
       "allowedTypes": [
         "images"
       ]
@@ -44,7 +45,8 @@
     "slug": {
       "type": "uid",
       "targetField": "name",
-      "required": true
+      "required": true,
+      "maxLength": 99
     },
     "categories": {
       "type": "relation",
@@ -54,7 +56,10 @@
     },
     "quotation_price": {
       "type": "decimal",
-      "required": false
+      "required": false,
+      "min": 0,
+      "default": 0,
+      "max": 9999999
     },
     "product_sizes": {
       "type": "relation",

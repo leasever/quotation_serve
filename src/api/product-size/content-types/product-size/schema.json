@@ -12,7 +12,11 @@
   },
   "attributes": {
     "quotation_price": {
-      "type": "decimal"
+      "type": "decimal",
+      "min": 0,
+      "max": 999999,
+      "default": 0,
+      "required": true
     },
     "val": {
       "type": "string",

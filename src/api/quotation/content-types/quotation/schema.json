@@ -37,24 +37,20 @@
     "pdfVoucher": {
       "type": "media",
       "multiple": true,
-      "required": true,
+      "required": false,
       "allowedTypes": [
         "files"
       ]
     },
     "products": {
-      "type": "json"
-    },
-    "status_quotation": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::status-quotation.status-quotation",
-      "inversedBy": "quotations"
+      "type": "json",
+      "required": true
     },
     "code_quotation": {
       "type": "string",
-      "required": true,
-      "unique": true
+      "required": false,
+      "unique": true,
+      "maxLength": 30
     }
   }
 }

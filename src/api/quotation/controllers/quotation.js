@@ -1,41 +1,40 @@
 const { createCoreController } = require("@strapi/strapi").factories;
 const { createPdfQuotation } = require("../../../utils/createPdfQuotation.js");
-const {
-  generateQuotationNumber,
-} = require("../../../utils/generateQuotationNumber.js");
 
-const { deletePdf, postPdf } = require("../services/quotation.service.js");
+const {
+  deletePdf,
+  postPdf,
+  senMessage,
+} = require("../services/quotation.service.js");
 
 module.exports = createCoreController(
   "api::quotation.quotation",
   ({ strapi }) => ({
+    /**
+     * @param {{ request: { body: { data: any; }; }; response: { status: number; }; }} ctx
+     */
     async create(ctx) {
       try {
         const { data } = ctx.request.body;
-        const quotationNumber = await generateQuotationNumber();
-        const fileContent = await createPdfQuotation(data, quotationNumber);
-
-        const fileSizeInMB = fileContent.length / (1024 * 1024);
-        if (fileSizeInMB > 5) {
-          throw new Error(
-            "El archivo PDF excede el tamaño máximo permitido de 5 MB"
-          );
-        }
-
-        const uploadedFileData = await postPdf(fileContent, quotationNumber);
-
-        const quotationData = {
-          ...data,
-          pdfVoucher: [uploadedFileData],
-          status_quotation: {
-            data: null,
-          },
-          code_quotation: quotationNumber,
-        };
 
         const quotation = await strapi
           .service("api::quotation.quotation")
-          .create({ data: quotationData });
+          .create({ data: data });
+        const quotationId = quotation.id.toString();
+
+        const quotationData = {
+          ...data,
+          id: quotation.id,
+          pdfVoucher: null,
+          code_quotation: quotationId,
+        };
+
+        await strapi
+          .service("api::quotation.quotation")
+          .update(quotation.id, { data: quotationData });
+
+        console.log("quotationData ", quotationData);
+        await senMessage(quotation.id);
         return { quotation };
       } catch (error) {
         ctx.response.status = 500;
@@ -44,6 +43,9 @@ module.exports = createCoreController(
       }
     },
 
+    /**
+     * @param {{ params: { id: any; }; request: { body: { data: any; }; }; response: { status: number; }; }} ctx
+     */
     async update(ctx) {
       try {
         const { id } = ctx.params;
@@ -51,22 +53,25 @@ module.exports = createCoreController(
         const quotation = await strapi
           .service("api::quotation.quotation")
           .findOne(id, { populate: "*" });
+        console.log(`iddelaapp `, id);
 
-        if (data.publishedAt === null) {
-          const quotationDResponse = await strapi
-            .service("api::quotation.quotation")
-            .update(id, {
-              data: { publishedAt: data.publishedAt },
-            });
-          return { data: quotationDResponse };
-        }
+        console.log(`datadelaapp `, data);
 
         if (quotation.pdfVoucher && quotation.pdfVoucher.length > 0) {
           const pdfVoucherId = quotation.pdfVoucher[0].id;
           await deletePdf(pdfVoucherId);
         }
 
-        const quotationNumber = quotation.code_quotation;
+        if (data.publishedAt === null) {
+          const quotationDResponse = await strapi
+            .service("api::quotation.quotation")
+            .update(id, {
+              data: { publishedAt: data.publishedAt, pdfVoucher: null },
+            });
+          return { data: quotationDResponse };
+        }
+
+        const quotationNumber = quotation.id;
         const fileContent = await createPdfQuotation(data, quotationNumber);
         const fileSizeInMB = fileContent.length / (1024 * 1024);
         if (fileSizeInMB > 5) {
@@ -81,7 +86,8 @@ module.exports = createCoreController(
           ...data,
           pdfVoucher: [uploadedFileData],
         };
-        const quotationDResponse = await strapi
+
+        await strapi
           .service("api::quotation.quotation")
           .update(id, { data: quotationData });
 
@@ -97,6 +103,9 @@ module.exports = createCoreController(
       }
     },
 
+    /**
+     * @param {{ params: { id: any; }; response: { status: number; }; }} ctx
+     */
     async delete(ctx) {
       try {
         const { id } = ctx.params;

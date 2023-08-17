@@ -72,7 +72,7 @@ function generateCustomerInformation(doc, data, quotationNumber) {
     .fontSize(10)
     .text("Número:", 50, customerInformationTop)
     .font("Helvetica-Bold")
-    .text(quotationNumber, 120, customerInformationTop)
+    .text(`${quotationNumber}`, 120, customerInformationTop)
     .font("Helvetica")
     .text("Fecha:", 50, customerInformationTop + 15)
     .text(currentDate, 120, customerInformationTop + 15)
