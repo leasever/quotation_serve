@@ -81,6 +81,8 @@ async function senMessage(id) {
   if (sendMessageRes.status !== 200) {
     throw new Error("Error al enviar la notificación");
   }
+  console.log("message", message);
+
   console.log("sendMessageRes.data ", sendMessageRes.data);
   return sendMessageRes.data;
 }

@@ -56,7 +56,6 @@ function generateHeader(doc) {
     .text("RUC: 20603425627", 330, 62)
     .text("Cel: 948125398", 330, 78)
     .text("Correo: consorcio.electrica.sac@gmail.com", 330, 94)
-    .text(`Web: ${process.env.CLIENT_URL}`, 330, 110)
 
     .moveDown();
 }

@@ -56,7 +56,7 @@
     },
     "quotation_price": {
       "type": "decimal",
-      "required": false,
+      "required": true,
       "min": 0,
       "default": 0,
       "max": 9999999
