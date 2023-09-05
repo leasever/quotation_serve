@@ -53,12 +53,6 @@ module.exports = createCoreController(
           .service("api::quotation.quotation")
           .findOne(id, { populate: "*" });
 
-
-        if (quotation.pdfVoucher && quotation.pdfVoucher.length > 0) {
-          const pdfVoucherId = quotation.pdfVoucher[0].id;
-          await deletePdf(pdfVoucherId);
-        }
-
         if (data.publishedAt === null) {
           const quotationDResponse = await strapi
             .service("api::quotation.quotation")
@@ -67,11 +61,13 @@ module.exports = createCoreController(
             });
           return { data: quotationDResponse };
         }
-
+        if (quotation.pdfVoucher && quotation.pdfVoucher.length > 0) {
+          const pdfVoucherId = quotation.pdfVoucher[0].id;
+          await deletePdf(pdfVoucherId);
+        }
         const quotationNumber = quotation.id;
-        
-        const fileContent = await 
-        createPdfQuotation(data, quotationNumber);
+
+        const fileContent = await createPdfQuotation(data, quotationNumber);
         const fileSizeInMB = fileContent.length / (1024 * 1024);
         if (fileSizeInMB > 5) {
           throw new Error(
